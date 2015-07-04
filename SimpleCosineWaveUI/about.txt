@@ -1,0 +1,22 @@
+﻿ABOUT Simple Cosine Wave UI:
+
+Requires:
+-Python version 2.7.9
+-PyQt4
+-pyqtgraph version 0.9.10
+
+This is a simple user interface that displays a cosine wave in the form f(t) = cos(2*pi*f*t + phi) where f is the frequency in hertz, phi is the phase angle, and t is a time series from 0 to 2 seconds with a sample interval of 0.001 seconds (or one millisecond) or equivalently 500 Hz sample rate.
+
+The controls at the bottom of the UI allow the user to change the frequency of the signal displayed and the phase.  Note that changing the phase is simply a time shift and this is true for any mono-frequency waveform.  The reset button will 'reset' the phase and frequency to zero.
+
+To begin, open terminal:
+$ python main.py
+
+This will start the GUI.  Play with sliders in the control panel to get a feel for how phase and frequency work.
+
+This program was designed to be an education tool for those (mainly geologists) still struggling to understand these two concepts: frequency and phase.  I hope you enjoy it and learn something.
+
+It is built using PyQt4 (http://www.riverbankcomputing.com/software/pyqt/intro) for the GUI and pyqtgraph (http://pyqtgraph.org/) for the plotting library.
+
+Anthony Torlucci
+2015/07/03
