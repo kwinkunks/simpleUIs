@@ -16,7 +16,7 @@ Distributed under the terms of the GNU General Public License (see gpl.txt for m
     GNU General Public License for more details.
 
     You should have received a copy of the GNU General Public License
-    along with Simple LAS Curve Viewer.  If not, see <http://www.gnu.org/licenses/>.
+    along with Simple Cosine Wave UI.  If not, see <http://www.gnu.org/licenses/>.
 '''
 
 __author__ = 'Anthony Torlucci'
