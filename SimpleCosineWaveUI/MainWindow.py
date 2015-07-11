@@ -47,11 +47,10 @@ class Window(QMainWindow):
         #
         self.phi = 0.0 # initialize the phase value
         self.freq = 0.0 # initialize frequency
-        self.fillIt = False
         #
-        self.phiLabel = QLabel('Phase: 0.0')
+        self.phiLabel = QLabel('Phase (degrees): 0.0')
         self.phaseSlider = QSlider(Qt.Horizontal)
-        self.freqLabel = QLabel('Frequency: 0.0')
+        self.freqLabel = QLabel('Frequency (Hz): 0.0')
         self.freqSlider = QSlider(Qt.Horizontal)
         self.resetButton = QPushButton('RESET')
         self.fillCheckBox = QCheckBox('Add Fill')
@@ -121,12 +120,12 @@ class Window(QMainWindow):
 
 
     def changePhi(self, value):
-        self.phi = value
-        self.phiLabel.setText('Phase: ' + str(value))
+        self.phi = value * np.pi / 180
+        self.phiLabel.setText('Phase (degrees): ' + str(value))
 
     def changeFreq(self, value):
         self.freq = value
-        self.freqLabel.setText('Frequency: ' + str(value))
+        self.freqLabel.setText('Frequency (Hz): ' + str(value))
 
     def resetValues(self):
         self.changePhi(0.0)

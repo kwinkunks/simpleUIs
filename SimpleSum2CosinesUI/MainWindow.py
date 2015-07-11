@@ -62,13 +62,13 @@ class Window(QMainWindow):
         self.t = np.linspace(0.0, 1.0, num=1000, endpoint=True)
         self.fillIt = False
         #
-        self.phi1Label = QLabel('Phase: 0.0')
+        self.phi1Label = QLabel('Phase (degrees): 0.0')
         self.phase1Slider = QSlider(Qt.Horizontal)
-        self.freq1Label = QLabel('Frequency: 0.0')
+        self.freq1Label = QLabel('Frequency (Hz): 0.0')
         self.freq1Slider = QSlider(Qt.Horizontal)
-        self.phi2Label = QLabel('Phase: 0.0')
+        self.phi2Label = QLabel('Phase (degrees): 0.0')
         self.phase2Slider = QSlider(Qt.Horizontal)
-        self.freq2Label = QLabel('Frequency: 0.0')
+        self.freq2Label = QLabel('Frequency (Hz): 0.0')
         self.freq2Slider = QSlider(Qt.Horizontal)
         self.resetButton = QPushButton('RESET')
         self.fillCheckBox = QCheckBox('Add Fill')
@@ -92,7 +92,7 @@ class Window(QMainWindow):
     def createDockWindows(self):
         controlPanelDockWidget = QDockWidget('controls', self)
         controlPanelDockWidget.setObjectName('ControlPanelDockWidget')
-        controlPanelDockWidget.setAllowedAreas(Qt.TopDockWidgetArea | Qt.BottomDockWidgetArea)
+        controlPanelDockWidget.setAllowedAreas(Qt.TopDockWidgetArea | Qt.BottomDockWidgetArea | Qt.LeftDockWidgetArea)
         # create a widget to house checkbox and list widget with QVBoxLayout
         houseWidget = QWidget(self) # self?
         # add a slider for phase
@@ -150,20 +150,20 @@ class Window(QMainWindow):
 
 
     def changePhi1(self, value):
-        self.phi1 = value
-        self.phi1Label.setText('f(t) Phase: ' + str(value))
+        self.phi1 = value * np.pi / 180
+        self.phi1Label.setText('f(t) Phase (degrees): ' + str(value))
 
     def changeFreq1(self, value):
         self.freq1 = value
-        self.freq1Label.setText('f(t) Frequency: ' + str(value))
+        self.freq1Label.setText('f(t) Frequency (Hz): ' + str(value))
 
     def changePhi2(self, value):
-        self.phi2 = value
-        self.phi2Label.setText('g(t) Phase: ' + str(value))
+        self.phi2 = value * np.pi / 180
+        self.phi2Label.setText('g(t) Phase (degrees): ' + str(value))
 
     def changeFreq2(self, value):
         self.freq2 = value
-        self.freq2Label.setText('g(t) Frequency: ' + str(value))
+        self.freq2Label.setText('g(t) Frequency (Hz): ' + str(value))
 
     def resetValues(self):
         self.changePhi1(0.0)
