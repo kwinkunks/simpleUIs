@@ -74,6 +74,10 @@ class Window(QMainWindow):
         strfname = str(fname)
         log_file = LASReader(strfname, null_subs=np.nan)
         self.log_df = pd.DataFrame(log_file.data2d, columns = log_file.curves.names, index=log_file.data['DEPTH'])
+        # added for crosshairs
+        self.startValue = log_file.start
+        self.stopValue = log_file.stop
+        self.stepValue = log_file.step
         # just to keep things clean
         del log_file
         # add the names of all the curves in the file (now DataFrame) to a list
@@ -88,7 +92,9 @@ class Window(QMainWindow):
         houseWidget = QWidget(self) # self?
         # add checkbox for log scale
         layout = QVBoxLayout()
+
         logCheckBox = QCheckBox('logarithm scale')
+
         def changeAxisScale():
             if logCheckBox.isChecked():
                 self.p1.setLogMode(x=True, y=False)
@@ -106,9 +112,18 @@ class Window(QMainWindow):
         self.listWidget.doubleClicked.connect(self.showCurve)
         #
         layout.addWidget(self.listWidget)
+        #
         houseWidget.setLayout(layout)
         curveSelectionDockWidget.setWidget(houseWidget)
         self.addDockWidget(Qt.LeftDockWidgetArea, curveSelectionDockWidget)
+        # +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+        # Create right dock widget to hold curve values when hovering p2
+        curveValueShowDockWidget = QDockWidget('Curve Values', self)
+        curveValueShowDockWidget.setObjectName('CurveValueShowDockWidget')
+        curveValueShowDockWidget.setAllowedAreas(Qt.RightDockWidgetArea)
+        self.label = QLabel()
+        curveValueShowDockWidget.setWidget(self.label)
+        self.addDockWidget(Qt.RightDockWidgetArea, curveValueShowDockWidget)
 
     @pyqtSlot()
     def showCurve(self):
@@ -119,18 +134,43 @@ class Window(QMainWindow):
         lr = pg.LinearRegionItem([1000, 6000], orientation = pg.LinearRegionItem.Horizontal)
         lr.setZValue(-10)
         self.p1.addItem(lr)
+
         def updatePlot():
             self.p2.setYRange(*lr.getRegion(), padding=0)
-        def updateRegion():
-            lr.setRegion(self.p2.getViewBox().viewRange()[0])
+
+        #def updateRegion():
+        #    lr.setRegion(self.p2.getViewBox().viewRange()[0])
         lr.sigRegionChanged.connect(updatePlot)
         #self.p2.sigXRegionChanged.connect(updateRegion) # x and y should be locked so this is not needed.
-        updatePlot()
         #
         depth = np.array(self.log_df['DEPTH'])
         strCurve = str(self.listWidget.currentItem().text())
         curve = np.array(self.log_df[strCurve])
         self.p1.plot(curve, depth, pen='k')
         self.p2.plot(curve, depth, pen='k')
+        #
+        # crosshairs
+        vLine = pg.InfiniteLine(angle=90, movable=False, pen='b')
+        hLine = pg.InfiniteLine(angle=0, movable=False, pen='b')
+        self.p2.addItem(vLine, ignoreBounds=True)
+        self.p2.addItem(hLine, ignoreBounds=True)
+        self.p2vb = self.p2.vb # I believe this is the viewbox associated with the plot p1?
+
+        def mouseMoved(mousePoint):
+            #
+            curvePoint = self.p2vb.mapSceneToView(mousePoint)
+            if self.p2.sceneBoundingRect().contains(mousePoint):
+                index = int((curvePoint.y() - self.startValue) / self.stepValue)
+                #print "curvePointY is: ", curvePoint.y()
+                #print "curve is:      ", curve[index]
+                if index > 0 and index < len(curve):
+                    self.label.setText("<span style='font-size: 12pt'>depth=%0.1f,   \
+                    <span style='color: blue'>curve=%0.5f</span>" % (depth[index], curve[index]))
+                vLine.setPos(curvePoint.x())
+                hLine.setPos(curvePoint.y())
+        self.p2.scene().sigMouseMoved.connect(mouseMoved)
+
+
+
 
 # =============== END OF SCRIPT =================
