@@ -55,6 +55,8 @@ class Window(QMainWindow):
         self.resetButton = QPushButton('RESET')
         self.fillCheckBox = QCheckBox('Add Fill')
         #
+        self.label = QLabel()
+        #
         self.createMenuBar()
         self.createDockWindows()
         self.showCurve()
@@ -113,6 +115,9 @@ class Window(QMainWindow):
         QObject.connect(self.fillCheckBox, SIGNAL('stateChanged(int)'), self.showCurve)
         layout.addWidget(self.fillCheckBox)
         #
+
+        layout.addWidget(self.label)
+        #
         houseWidget.setLayout(layout)
         controlPanelDockWidget.setWidget(houseWidget)
         self.addDockWidget(Qt.BottomDockWidgetArea, controlPanelDockWidget)
@@ -147,5 +152,25 @@ class Window(QMainWindow):
             c.setBrush('k')
             c.setFillLevel(0.0)
 
+        # crosshairs
+        vLine = pg.InfiniteLine(angle=90, movable=False, pen='b')
+        hLine = pg.InfiniteLine(angle=0, movable=False, pen='b')
+        self.p1.addItem(vLine, ignoreBounds=True)
+        self.p1.addItem(hLine, ignoreBounds=True)
+        self.p1vb = self.p1.vb
+
+        def mouseMoved(mousePoint):
+            #
+            curvePoint = self.p1vb.mapSceneToView(mousePoint)
+            if self.p1.sceneBoundingRect().contains(mousePoint):
+                index = int((curvePoint.x() - t[0]) * 1000)
+                #print "curvePointY is: ", curvePoint.y()
+                #print "curve is:      ", curve[index]
+                if index > 0 and index < len(curve):
+                    self.label.setText("<span style='font-size: 12pt'>time=%0.5f,   \
+                    <span style='color: blue'>curve=%0.5f</span>" % (t[index], curve[index]))
+                vLine.setPos(curvePoint.x())
+                hLine.setPos(curvePoint.y())
+        self.p1.scene().sigMouseMoved.connect(mouseMoved)
 
 # =============== END OF SCRIPT =================

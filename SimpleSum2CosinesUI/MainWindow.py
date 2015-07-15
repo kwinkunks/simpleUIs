@@ -73,6 +73,8 @@ class Window(QMainWindow):
         self.resetButton = QPushButton('RESET')
         self.fillCheckBox = QCheckBox('Add Fill')
         #
+        self.label = QLabel()
+        #
         self.createMenuBar()
         self.createDockWindows()
         self.updatePlot1()
@@ -143,6 +145,8 @@ class Window(QMainWindow):
         QObject.connect(self.fillCheckBox, SIGNAL('stateChanged(int)'), self.updatePlotSum)
         layout.addWidget(self.fillCheckBox)
         #
+        layout.addWidget(self.label)
+
         houseWidget.setLayout(layout)
         controlPanelDockWidget.setWidget(houseWidget)
         self.addDockWidget(Qt.BottomDockWidgetArea, controlPanelDockWidget)
@@ -187,6 +191,26 @@ class Window(QMainWindow):
         if self.fillCheckBox.isChecked():
             c1.setBrush('k')
             c1.setFillLevel(0.0)
+        # crosshairs
+        vLine = pg.InfiniteLine(angle=90, movable=False, pen='b')
+        hLine = pg.InfiniteLine(angle=0, movable=False, pen='b')
+        self.p1.addItem(vLine, ignoreBounds=True)
+        self.p1.addItem(hLine, ignoreBounds=True)
+        self.p1vb = self.p1.vb
+
+        def mouseMoved(mousePoint):
+            #
+            curvePoint = self.p1vb.mapSceneToView(mousePoint)
+            if self.p1.sceneBoundingRect().contains(mousePoint):
+                index = int((curvePoint.x() - self.t[0]) * 1000)
+                #print "curvePointY is: ", curvePoint.y()
+                #print "curve is:      ", curve[index]
+                if index > 0 and index < len(self.curve1):
+                    self.label.setText("<span style='font-size: 12pt'>time=%0.5f,   \
+                    <span style='color: blue'>curve=%0.5f</span>" % (self.t[index], self.curve1[index]))
+                vLine.setPos(curvePoint.x())
+                hLine.setPos(curvePoint.y())
+        self.p1.scene().sigMouseMoved.connect(mouseMoved)
 
     @pyqtSlot()
     def updatePlot2(self):
@@ -200,6 +224,26 @@ class Window(QMainWindow):
         if self.fillCheckBox.isChecked():
             c2.setBrush('k')
             c2.setFillLevel(0.0)
+        # crosshairs
+        vLine = pg.InfiniteLine(angle=90, movable=False, pen='r')
+        hLine = pg.InfiniteLine(angle=0, movable=False, pen='r')
+        self.p2.addItem(vLine, ignoreBounds=True)
+        self.p2.addItem(hLine, ignoreBounds=True)
+        self.p2vb = self.p2.vb
+
+        def mouseMoved(mousePoint):
+            #
+            curvePoint = self.p2vb.mapSceneToView(mousePoint)
+            if self.p2.sceneBoundingRect().contains(mousePoint):
+                index = int((curvePoint.x() - self.t[0]) * 1000) # 1000 is the number of points in t
+                #print "curvePointY is: ", curvePoint.y()
+                #print "curve is:      ", curve[index]
+                if index > 0 and index < len(self.curve2):
+                    self.label.setText("<span style='font-size: 12pt'>time=%0.5f,   \
+                    <span style='color: red'>curve=%0.5f</span>" % (self.t[index], self.curve2[index]))
+                vLine.setPos(curvePoint.x())
+                hLine.setPos(curvePoint.y())
+        self.p2.scene().sigMouseMoved.connect(mouseMoved)
 
     @pyqtSlot()
     def updatePlotSum(self):
@@ -213,6 +257,26 @@ class Window(QMainWindow):
         if self.fillCheckBox.isChecked():
             cS.setBrush('k')
             cS.setFillLevel(0.0)
+        # crosshairs
+        vLine = pg.InfiniteLine(angle=90, movable=False, pen='g')
+        hLine = pg.InfiniteLine(angle=0, movable=False, pen='g')
+        self.pSum.addItem(vLine, ignoreBounds=True)
+        self.pSum.addItem(hLine, ignoreBounds=True)
+        self.pSvb = self.pSum.vb
+
+        def mouseMoved(mousePoint):
+            #
+            curvePoint = self.pSvb.mapSceneToView(mousePoint)
+            if self.pSum.sceneBoundingRect().contains(mousePoint):
+                index = int((curvePoint.x() - self.t[0]) * 1000)
+                #print "curvePointY is: ", curvePoint.y()
+                #print "curve is:      ", curve[index]
+                if index > 0 and index < len(curveSum):
+                    self.label.setText("<span style='font-size: 12pt'>time=%0.5f,   \
+                    <span style='color: green'>curve=%0.5f</span>" % (self.t[index], curveSum[index]))
+                vLine.setPos(curvePoint.x())
+                hLine.setPos(curvePoint.y())
+        self.pSum.scene().sigMouseMoved.connect(mouseMoved)
 
 
 # =============== END OF SCRIPT =================
