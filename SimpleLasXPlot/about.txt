@@ -1,0 +1,20 @@
+ABOUT Simple LAS X Plot:
+
+Requires:
+-Python version 2.7.9
+-PyQt4
+-pyqtgraph version 0.9.10
+
+This UI is an extension of Simple LAS Curve Viewer.  It allows the user to import an LAS (.las) file and cross plot the values on another plot region.
+
+To begin, open terminal:
+$ python main.py
+
+This will start the GUI.  Then go to File->import las.  This will open a dialog box.  Select an las file.  Double-click on a curve name to view it.
+The top list corresponds to the left curve plot and the X or bottom axis of the cross plot.  The bottom list corresponds to the right curve plot and the Y or left axis of the cross plot.
+
+This program was designed to be an interactive visualization of the various curves in a well log (las file).
+
+It is built using PyQt4 (http://www.riverbankcomputing.com/software/pyqt/intro) for the GUI and pyqtgraph (http://pyqtgraph.org/) for the plotting library.
+
+Anthony Torlucci
